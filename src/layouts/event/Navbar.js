@@ -2,7 +2,7 @@ import classname from "classnames"
 import React, { useEffect, useState } from "react"
 //i18n
 import { withTranslation } from "react-i18next"
-import { Link, useNavigate, useLocation, useParams } from "react-router-dom"
+import { Link, withRouter } from "react-router-dom"
 import { Col, Collapse, Row } from "reactstrap"
 
 const Navbar = props => {
@@ -26,10 +26,6 @@ const Navbar = props => {
   const [invoice, setinvoice] = useState(false)
   const [auth, setauth] = useState(false)
   const [utility, setutility] = useState(false)
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
 
   useEffect(() => {
     var matchingMenuItem = null
@@ -887,4 +883,4 @@ const Navbar = props => {
   )
 }
 
-export default Navbar
+export default withRouter(withTranslation()(Navbar))

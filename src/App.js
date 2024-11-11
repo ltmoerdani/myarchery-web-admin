@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Switch } from "react-router-dom";
 import { AuthLayout } from "./layouts";
 import { AuthenticationMiddleware } from "./middlewares";
 import {
@@ -18,98 +18,43 @@ import { EventDetailProvider } from "contexts/event-detail";
 
 import "./assets/scss/theme.scss";
 import "react-datepicker/dist/react-datepicker.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-// In components using react-select
-import Select from 'react-select';
+const renderRoutes = (routes, layout, isAuthProtected) =>
+  routes.map((route) => (
+    <AuthenticationMiddleware
+      path={route.path}
+      layout={layout}
+      component={route.component}
+      key={route.path}
+      isAuthProtected={isAuthProtected}
+      exact
+    />
+  ));
 
-// In components using reactstrap
-import { 
-  Button, 
-  Form, 
-  Input, 
-  Label,
-  // other components... 
-} from 'reactstrap';
+const LoginRedirect = () => <Redirect to="/login" />;
 
 const App = () => {
   return (
-    <React.Fragment>
-      <Router>
-        <EventDetailProvider>
-          <Routes>
-            <AuthenticationMiddleware
-              path="/"
-              layout={React.Fragment}
-              element={<Navigate to="/login" replace />}
-              isAuthProtected={false}
-              exact
-            />
-            {authenticationRoutes.map((route, idx) => (
-              <AuthenticationMiddleware
-                path={route.path}
-                layout={AuthLayout}
-                element={<route.component />}
-                key={idx}
-                isAuthProtected={false}
-                exact
-              />
-            ))}
-            {dashboardRoutes.map((route, idx) => (
-              <AuthenticationMiddleware
-                path={route.path}
-                layout={LayoutDashboard}
-                element={<route.component />}
-                key={idx}
-                isAuthProtected={true}
-                exact
-              />
-            ))}
-            {certificateRoutes.map((route, idx) => (
-              <AuthenticationMiddleware
-                path={route.path}
-                layout={LayoutDashboard}
-                element={<route.component />}
-                key={idx}
-                isAuthProtected={true}
-                exact
-              />
-            ))}
-            {liveScoreRoutes.map((route, idx) => (
-              <AuthenticationMiddleware
-                path={route.path}
-                layout={LayoutLiveScores}
-                element={<route.component />}
-                key={idx}
-                isAuthProtected={false}
-                exact
-              />
-            ))}
-            {workingRoutes.map((route, idx) => (
-              <AuthenticationMiddleware
-                path={route.path}
-                layout={AuthLayout}
-                element={<route.component />}
-                key={idx}
-                isAuthProtected={false}
-                exact
-              />
-            ))}
-            {dosRoutes.map((route, idx) => (
-              <AuthenticationMiddleware
-                path={route.path}
-                layout={LayoutDashboardDos}
-                element={<route.component />}
-                key={idx}
-                isAuthProtected={false}
-                exact
-              />
-            ))}
-            <Navigate to="/working/not-found" replace />
-          </Routes>
-        </EventDetailProvider>
-      </Router>
-    </React.Fragment>
+    <Router>
+      <EventDetailProvider>
+        <Switch>
+          <AuthenticationMiddleware
+            path="/"
+            layout={React.Fragment}
+            component={LoginRedirect}
+            isAuthProtected={false}
+            exact
+          />
+          {renderRoutes(authenticationRoutes, AuthLayout, false)}
+          {renderRoutes(dashboardRoutes, LayoutDashboard, true)}
+          {renderRoutes(certificateRoutes, LayoutDashboard, true)}
+          {renderRoutes(liveScoreRoutes, LayoutLiveScores, false)}
+          {renderRoutes(workingRoutes, AuthLayout, false)}
+          {renderRoutes(dosRoutes, LayoutDashboardDos, false)}
+          <Redirect to="/working/not-found" />
+        </Switch>
+      </EventDetailProvider>
+    </Router>
   );
 };
 

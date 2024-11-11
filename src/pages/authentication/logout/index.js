@@ -1,11 +1,11 @@
 import React, { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import * as AuthenticationStore from "store/slice/authentication"
-import { useNavigate } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 
 const Logout = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const history = useHistory()
   const { isLoggedIn } = useSelector(AuthenticationStore.getAuthenticationStore)
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const Logout = () => {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate("/login")
+      history.push("/login")
     }
   }, [isLoggedIn])
 

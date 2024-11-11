@@ -1,77 +1,41 @@
-import React, { Component } from "react"
-import { useNavigate, useLocation, useParams } from "react-router-dom"
+import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
+// Import komponen lain yang terkait dengan Layout
+import Header from "./Header";
+import Footer from "./Footer";
 
-// Other Layout related Component
-import Navbar from "./Navbar"
-import Header from "./Header"
-import Footer from "./Footer"
+const EventLayout = (props) => {
+  // Contoh penggunaan state untuk mengelola kondisi tertentu
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-function Layout(props) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
-
-  const [isMenuOpened, setIsMenuOpened] = React.useState(false);
-
-  React.useEffect(() => {
-    if (document.body) document.body.setAttribute('data-layout', 'horizontal')
-    if (props.isPreloader === true) {
-      document.getElementById("preloader").style.display = "block"
-      document.getElementById("status").style.display = "block"
-
-      setTimeout(function () {
-        document.getElementById("preloader").style.display = "none"
-        document.getElementById("status").style.display = "none"
-      }, 2500)
-    } else {
-      document.getElementById("preloader").style.display = "none"
-      document.getElementById("status").style.display = "none"
+  // Menggunakan useEffect untuk mensimulasikan componentDidMount
+  useEffect(() => {
+    // Logika yang biasanya ada di componentDidMount
+    if (props.someCondition) {
+      document.body.classList.add("some-class");
     }
 
-    // Scrollto 0,0
-    window.scrollTo(0, 0)
+    // Cleanup jika diperlukan
+    return () => {
+      document.body.classList.remove("some-class");
+    };
+  }, [props.someCondition]); // Dependency array sesuai props atau state yang digunakan
 
-    const title = location.pathname
-    let currentage = title.charAt(1).toUpperCase() + title.slice(2)
-
-    document.title =
-      currentage + " | Skote - React Admin & Dashboard Template"
-  }, [location.pathname, props.isPreloader]);
-
-  /**
-   * Opens the menu - mobile
-   */
-  const openMenu = () => {
-    setIsMenuOpened(!isMenuOpened)
-  }
+  const handleMenuToggle = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <React.Fragment>
-      <div id="preloader">
-        <div id="status">
-          <div className="spinner-chase">
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-          </div>
-        </div>
-      </div>
-
-      <div id="layout-wrapper">
-        <Header
-          theme={props.topbarTheme}
-          isMenuOpened={isMenuOpened}
-          openLeftMenuCallBack={openMenu}
-        />
-        <Navbar menuOpen={isMenuOpened} />
-        <div className="main-content">{props.children}</div>
-        <Footer />
-      </div>
+      {/* Header komponen */}
+      <Header toggleMenu={handleMenuToggle} />
+      {/* Konten utama */}
+      <div>{props.children}</div>
+      {/* Footer komponen */}
+      <Footer />
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default Layout;
+// Membungkus komponen dengan withRouter untuk mendapatkan akses ke props history
+export default withRouter(EventLayout);

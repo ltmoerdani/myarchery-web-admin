@@ -1,16 +1,15 @@
-import React from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import React from "react";
+import { withRouter } from "react-router-dom";
+import "toastr/build/toastr.min.css";
 
-function NonAuthLayout() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
+const NonAuthLayout = (props) => {
+  return <React.Fragment>{props.children}</React.Fragment>;
+};
 
-  return (
-    <div>
-      {/* Your layout content */}
-    </div>
-  );
-}
+NonAuthLayout.propTypes = {
+  children: PropTypes.any,
+  location: PropTypes.object,
+};
 
-export default NonAuthLayout;
+export default withRouter(NonAuthLayout);

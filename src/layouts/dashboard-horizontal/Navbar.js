@@ -2,14 +2,10 @@ import classname from "classnames";
 import React, { useEffect, useState } from "react";
 //i18n
 import { withTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { Collapse } from "reactstrap";
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 const Navbar = props => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
   // const [app, setapp] = useState(false);
   const [event, setEvent] = useState(false)
 
@@ -135,4 +131,4 @@ const Navbar = props => {
   );
 };
 
-export default Navbar;
+export default withRouter(withTranslation()(Navbar));

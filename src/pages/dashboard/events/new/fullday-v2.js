@@ -654,9 +654,7 @@ function PageCreateEventFullday({ classification }) {
                       // diambil dari data tanggal lomba dari event detail
                       fetchEventDetail();
                       fetchConfigRegistrationDates();
-                      if (formRegistrationDates.isFirstTimeCreatingConfig) {
-                        next();
-                      }
+                      formRegistrationDates.isFirstTimeCreatingConfig && next();
                     },
                   });
                 }}

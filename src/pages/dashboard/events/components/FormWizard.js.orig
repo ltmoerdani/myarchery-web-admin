@@ -1,6 +1,6 @@
 import classnames from "classnames";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
   Card,
   CardBody,
@@ -28,7 +28,7 @@ const FormWizard = ({ onFormFieldChange, formData }) => {
   const [activeTab, setactiveTab] = useState(1);
 
   const dispatch = useDispatch();
-  const history = useNavigate();
+  const history = useHistory();
 
   // const { errors } = useSelector(EventsStore.getEventsStore)
   // console.log(errors)

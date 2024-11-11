@@ -1,7 +1,7 @@
 import PropTypes from "prop-types"
 import React from "react"
 import { connect } from "react-redux"
-import { useNavigate, useLocation, useParams } from "react-router-dom"
+import { withRouter } from "react-router-dom"
 
 //i18n
 import { withTranslation } from "react-i18next"
@@ -15,9 +15,6 @@ import logoLightSvg from "../../assets/images/logo-light.svg"
 import logoDark from "../../assets/images/logo-dark.png"
 
 const Sidebar = props => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
 
   return (
     <React.Fragment>
@@ -62,4 +59,4 @@ const mapStatetoProps = state => {
 export default connect(
   mapStatetoProps,
   {}
-)(withTranslation()(Sidebar))
+)(withRouter(withTranslation()(Sidebar)))

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useNavigate, useLocation, useParams, Navigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import { useUserProfile } from "hooks/user-profile";
 import { useLocation as useAdministativeLocation } from "utils/hooks/location";
@@ -20,9 +20,7 @@ import { Link } from "react-router-dom";
 import user1 from "assets/images/users/avatar-man.png";
 
 const ProfileMenu = (props) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
+  const { push } = useHistory();
   const { userProfile } = useUserProfile({ forceFetchOnMount: true });
   useAdministativeLocation();
 
@@ -32,7 +30,7 @@ const ProfileMenu = (props) => {
 
   const handleShowConfirmLogout = () => setConfirmLogout(true);
   const handleCancelLogout = () => setConfirmLogout(false);
-  const handleLogout = () => navigate("/logout");
+  const handleLogout = () => push("/logout");
 
   const avatarURL = _getAvatarURL(userProfile?.avatar, user1);
 
@@ -81,7 +79,7 @@ const ProfileMenu = (props) => {
             <i className="bx bx-power-off font-size-16 align-middle me-1 text-danger" />
             <span>{props.t("Logout")}</span>
           </DropdownItem>
-          </DropdownMenu>
+        </DropdownMenu>
       </Dropdown>
 
       <SweetAlert
@@ -120,4 +118,4 @@ function _getAvatarURL(URL, fallbackURL) {
   return URL;
 }
 
-export default ProfileMenu;
+export default withTranslation()(ProfileMenu);

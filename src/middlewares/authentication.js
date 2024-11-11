@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Navigate, useNavigate, useLocation, useParams } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { getAuthenticationStore } from "store/slice/authentication";
@@ -21,12 +21,11 @@ const AuthenticationMiddleware = ({
       render={(props) => {
         if (isAuthProtected && !isLoggedIn) {
           return (
-            <Navigate
+            <Redirect
               to={{
                 pathname: "/login",
                 state: { from: props.location },
               }}
-              replace
             />
           );
         }
@@ -48,13 +47,5 @@ AuthenticationMiddleware.propTypes = {
   location: PropTypes.object,
   layout: PropTypes.any,
 };
-
-function Component() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
-  
-  return <div>...</div>;
-}
 
 export default AuthenticationMiddleware;

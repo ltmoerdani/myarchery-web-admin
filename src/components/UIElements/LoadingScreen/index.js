@@ -1,14 +1,14 @@
-import React from 'react'
-// src/components/UIElements/LoadingScreen/index.js
-import { FadeLoader } from 'react-spinners';
-import "./style.css"
+import React from "react";
+import FadeLoader from "react-spinners/FadeLoader";
+import "./style.css";
 
-function LoadingScreen({loading}) {
+// Functional Component untuk LoadingScreen
+const LoadingScreen = React.memo(({ loading }) => {
   return (
-    <div className="loading-screen">
-      <FadeLoader color="#123abc" loading={loading} />
+    <div className={loading ? "loading" : ""}>
+      <FadeLoader color="white" loading={loading} />
     </div>
   );
-}
+});
 
 export default LoadingScreen;

@@ -1,95 +1,56 @@
-import React, { Component } from "react"
-import { useNavigate, useLocation, useParams } from "react-router-dom"
-import Footer from "./Footer"
+import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
+import Footer from "./Footer";
 // Layout Related Components
-import Header from "./Header"
-import Sidebar from "./Sidebar"
+import Header from "./Header";
+import Sidebar from "./Sidebar";
 
-function Layout(props) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
-
-  const [isMobile, setIsMobile] = React.useState(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
-
-  const toggleMenuCallback = () => {
-    if (props.leftSideBarType === "default") {
-      props.changeSidebarType("condensed", isMobile)
-    } else if (props.leftSideBarType === "condensed") {
-      props.changeSidebarType("default", isMobile)
-    }
-  }
-
-  React.useEffect(() => {
+// Functional Component untuk Layout
+const Layout = (props) => {
+  // State untuk memeriksa apakah pengguna menggunakan perangkat mobile
+  const [isMobile, setIsMobile] = useState(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  
+  // Menggunakan useEffect untuk mensimulasikan componentDidMount
+  useEffect(() => {
+    // Logika untuk preloader
     if (props.isPreloader === true) {
-      document.getElementById("preloader").style.display = "block"
-      document.getElementById("status").style.display = "block"
+      // Menampilkan elemen preloader
+      document.getElementById("preloader").style.display = "block";
+      document.getElementById("status").style.display = "block";
 
-      setTimeout(function () {
-        document.getElementById("preloader").style.display = "none"
-        document.getElementById("status").style.display = "none"
-      }, 2500)
+      // Menyembunyikan preloader setelah 2.5 detik
+      setTimeout(() => {
+        document.getElementById("preloader").style.display = "none";
+        document.getElementById("status").style.display = "none";
+      }, 2500);
     } else {
-      document.getElementById("preloader").style.display = "none"
-      document.getElementById("status").style.display = "none"
+      // Jika preloader tidak diaktifkan, langsung sembunyikan elemen preloader
+      document.getElementById("preloader").style.display = "none";
+      document.getElementById("status").style.display = "none";
     }
 
-    // Scroll Top to 0
-    window.scrollTo(0, 0)
-    // let currentage = capitalizeFirstLetter(props.location.pathname)
+    // Menggulir halaman ke atas saat komponen dimuat atau saat path berubah
+    window.scrollTo(0, 0);
+  }, [props.isPreloader]); // Menggunakan isPreloader sebagai dependensi
 
-    // document.title =
-    //   currentage + " | MyArchery"
-    if (props.leftSideBarTheme) {
-      props.changeSidebarTheme(props.leftSideBarTheme)
-    }
-    if (props.leftSideBarThemeImage) {
-      props.changeSidebarThemeImage(props.leftSideBarThemeImage)
-    }
-
-    if (props.layoutWidth) {
-      props.changeLayoutWidth(props.layoutWidth)
-    }
-
-    if (props.leftSideBarType) {
-      props.changeSidebarType(props.leftSideBarType)
-    }
-    if (props.topbarTheme) {
-      props.changeTopbarTheme(props.topbarTheme)
-    }
-  }, [props]);
-
-  const capitalizeFirstLetter = string => {
-    return string.charAt(1).toUpperCase() + string.slice(2)
-  }
+  // Fungsi untuk toggle menu callback
+  const toggleMenuCallback = () => {
+    setIsMobile(!isMobile);
+  };
 
   return (
     <React.Fragment>
-      <div id="preloader">
-        <div id="status">
-          <div className="spinner-chase">
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-            <div className="chase-dot" />
-          </div>
-        </div>
-      </div>
-
-      <div id="layout-wrapper">
-        <Header toggleMenuCallback={toggleMenuCallback} />
-        <Sidebar
-          theme={props.leftSideBarTheme}
-          type={props.leftSideBarType}
-          isMobile={isMobile}
-        />
-        <div className="main-content">{props.children}</div>
-        <Footer />
-      </div>
+      {/* Menampilkan Header */}
+      <Header />
+      {/* Menampilkan Sidebar dengan fungsi toggle */}
+      <Sidebar isMobile={isMobile} toggleMenuCallback={toggleMenuCallback} />
+      {/* Menampilkan anak komponen yang dikirim melalui props */}
+      {props.children}
+      {/* Menampilkan Footer */}
+      <Footer />
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default Layout;
+// Membungkus komponen dengan withRouter untuk mendapatkan akses ke props history
+export default withRouter(Layout);
