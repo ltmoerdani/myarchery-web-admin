@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { stringUtil } from "utils";
 import { useWizardView } from "utils/hooks/wizard-view";
@@ -31,6 +31,7 @@ import { PreviewPortal } from "../../components/preview";
 import { LoadingScreen } from "../components/loading-screen-portal";
 
 import IconAlertTriangle from "components/ma/icons/mono/alert-triangle";
+import { PageWrapper } from "components/ma/page-wrapper";
 
 import "pages/dashboard/events/style-overrides/main-content.scss";
 
@@ -116,7 +117,7 @@ const initialEventData = {
 
 // Komponen utama EventsNewFullday
 const EventsNewFullday = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // State dan fungsi terkait langkah-langkah pembuatan acara
   const {
@@ -220,7 +221,7 @@ const EventsNewFullday = () => {
       setSavingEventStatus({ status: "success", errors: null });
       const eventId = result.data?.id;
       eventId &&
-        history.push(`/dashboard/events/new/prepublish?eventId=${eventId}`);
+        navigate(`/dashboard/events/new/prepublish?eventId=${eventId}`);
     } else {
       setSavingEventStatus({ status: "error", errors: result.errors });
     }
@@ -239,7 +240,7 @@ const EventsNewFullday = () => {
       setSavingEventStatus({ status: "success", errors: null });
       const eventId = result.data?.id;
       eventId &&
-        history.push(`/dashboard/events/new/prepublish?eventId=${eventId}`);
+        navigate(`/dashboard/events/new/prepublish?eventId=${eventId}`);
     } else {
       setSavingEventStatus({ status: "error", errors: result.errors });
     }
@@ -251,138 +252,140 @@ const EventsNewFullday = () => {
   }, [currentStep]);
 
   return (
-    <React.Fragment>
-      <Toaster
-        containerStyle={{ top: 80 }}
-        toastOptions={{
-          success: {
-            style: {
-              background: "var(--ma-primary-blue-50)",
+    <PageWrapper title="Fullday Event | MyArchery.id">
+      <React.Fragment>
+        <Toaster
+          containerStyle={{ top: 80 }}
+          toastOptions={{
+            success: {
+              style: {
+                background: "var(--ma-primary-blue-50)",
+              },
             },
-          },
-        }}
-      />
+          }}
+        />
 
-      {lastActiveStep === 1 && (
-        <div>
-          <RibbonEventConfig />
-        </div>
-      )}
+        {lastActiveStep === 1 && (
+          <div>
+            <RibbonEventConfig />
+          </div>
+        )}
 
-      <StyledPageWrapper>
-        <MetaTags>
-          <title>Buat Event Baru | MyArchery.id</title>
-        </MetaTags>
+        <StyledPageWrapper>
+          <MetaTags>
+            <title>Buat Event Baru | MyArchery.id</title>
+          </MetaTags>
 
-        <Container fluid>
-          <StickyContainer>
-            <StickyItem>
-              <StepList
-                steps={steps}
-                currentStep={currentStep}
-                lastActiveStep={lastActiveStep}
-                onChange={(ev) => goToStep(ev.target.value)}
-              >
-                Pertandingan
-              </StepList>
-            </StickyItem>
+          <Container fluid>
+            <StickyContainer>
+              <StickyItem>
+                <StepList
+                  steps={steps}
+                  currentStep={currentStep}
+                  lastActiveStep={lastActiveStep}
+                  onChange={(ev) => goToStep(ev.target.value)}
+                >
+                  Pertandingan
+                </StepList>
+              </StickyItem>
 
-            <StickyItemSibling>
-              <RowStickyHeader>
-                {currentStep < stepsTotal && (
-                  <Col>
-                    <h2>{currentLabel}</h2>
-                    <p>{steps[currentStep - 1].description}</p>
-                  </Col>
-                )}
-              </RowStickyHeader>
-
-              <div className="content-scrollable flex-grow-1 mb-5">
-                <div className="content-scrollable-inner">
-                  <WizardView currentStep={currentStep}>
-                    <WizardViewContent>
-                      <StepInfoUmum
-                        eventData={eventData}
-                        updateEventData={updateEventData}
-                        validationErrors={validationErrors[1] || {}}
-                      />
-                    </WizardViewContent>
-
-                    <WizardViewContent>
-                      <StepBiaya
-                        eventData={eventData}
-                        updateEventData={updateEventData}
-                        validationErrors={validationErrors[3] || {}}
-                      />
-                    </WizardViewContent>
-
-                    <WizardViewContent>
-                      <StepKategori
-                        eventData={eventData}
-                        updateEventData={updateEventData}
-                        validationErrors={validationErrors[2] || {}}
-                      />
-                    </WizardViewContent>
-
-                    <WizardViewContent>
-                      <StepJadwal
-                        eventData={eventData}
-                        updateEventData={updateEventData}
-                        validationErrors={validationErrors[4] || {}}
-                      />
-                    </WizardViewContent>
-
-                    <WizardViewContent>
-                      <StepSelesai eventData={eventData} />
-                    </WizardViewContent>
-                  </WizardView>
-
+              <StickyItemSibling>
+                <RowStickyHeader>
                   {currentStep < stepsTotal && (
-                    <div className="mx-auto d-flex justify-content-between align-items-center flex-wrap">
-                      <div>
-                        {currentStep > 1 && (
-                          <ButtonOutlineBlue
-                            corner="8"
-                            onClick={() => goToPreviousStep()}
-                          >
-                            Sebelumnya
-                          </ButtonOutlineBlue>
-                        )}
-                      </div>
-
-                      <div>
-                        <ButtonBlue
-                          corner="8"
-                          onClick={handleClickSaveButton}
-                        >
-                          Simpan
-                        </ButtonBlue>
-                      </div>
-                    </div>
+                    <Col>
+                      <h2>{currentLabel}</h2>
+                      <p>{steps[currentStep - 1].description}</p>
+                    </Col>
                   )}
+                </RowStickyHeader>
+
+                <div className="content-scrollable flex-grow-1 mb-5">
+                  <div className="content-scrollable-inner">
+                    <WizardView currentStep={currentStep}>
+                      <WizardViewContent>
+                        <StepInfoUmum
+                          eventData={eventData}
+                          updateEventData={updateEventData}
+                          validationErrors={validationErrors[1] || {}}
+                        />
+                      </WizardViewContent>
+
+                      <WizardViewContent>
+                        <StepBiaya
+                          eventData={eventData}
+                          updateEventData={updateEventData}
+                          validationErrors={validationErrors[3] || {}}
+                        />
+                      </WizardViewContent>
+
+                      <WizardViewContent>
+                        <StepKategori
+                          eventData={eventData}
+                          updateEventData={updateEventData}
+                          validationErrors={validationErrors[2] || {}}
+                        />
+                      </WizardViewContent>
+
+                      <WizardViewContent>
+                        <StepJadwal
+                          eventData={eventData}
+                          updateEventData={updateEventData}
+                          validationErrors={validationErrors[4] || {}}
+                        />
+                      </WizardViewContent>
+
+                      <WizardViewContent>
+                        <StepSelesai eventData={eventData} />
+                      </WizardViewContent>
+                    </WizardView>
+
+                    {currentStep < stepsTotal && (
+                      <div className="mx-auto d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                          {currentStep > 1 && (
+                            <ButtonOutlineBlue
+                              corner="8"
+                              onClick={() => goToPreviousStep()}
+                            >
+                              Sebelumnya
+                            </ButtonOutlineBlue>
+                          )}
+                        </div>
+
+                        <div>
+                          <ButtonBlue
+                            corner="8"
+                            onClick={handleClickSaveButton}
+                          >
+                            Simpan
+                          </ButtonBlue>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </StickyItemSibling>
-          </StickyContainer>
-        </Container>
-      </StyledPageWrapper>
+              </StickyItemSibling>
+            </StickyContainer>
+          </Container>
+        </StyledPageWrapper>
 
-      <PreviewPortal
-        isActive={shouldShowPreview}
-        isLoading={isLoading}
-        eventData={eventData}
-        onClose={() => setShouldShowPreview(false)}
-        onSave={handleSaveEvent}
-        onPublish={handlePublishEvent}
-      />
+        <PreviewPortal
+          isActive={shouldShowPreview}
+          isLoading={isLoading}
+          eventData={eventData}
+          onClose={() => setShouldShowPreview(false)}
+          onSave={handleSaveEvent}
+          onPublish={handlePublishEvent}
+        />
 
-      <LoadingScreen loading={isLoading} />
+        <LoadingScreen loading={isLoading} />
 
-      <AlertSubmitError
-        isError={isErrorSubmitting}
-        errors={savingEventStatus.errors}
-      />
-    </React.Fragment>
+        <AlertSubmitError
+          isError={isErrorSubmitting}
+          errors={savingEventStatus.errors}
+        />
+      </React.Fragment>
+    </PageWrapper>
   );
 };
 

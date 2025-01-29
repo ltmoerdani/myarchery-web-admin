@@ -1,29 +1,23 @@
-import * as React from "react";
+import React from "react";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
-
-import MetaTags from "react-meta-tags";
+import { PageWrapper } from "components/ma/page-wrapper";
 import { Container } from "reactstrap";
 import { BreadcrumbDashboard } from "../../components/breadcrumb";
 
-function ContentLayoutWrapper({ children, pageTitle, navbar }) {
+const ContentLayoutWrapper = ({ children, pageTitle, navbar }) => {
   const { state } = useLocation();
   const backButtonURL = state?.from || "/dashboard";
   return (
-    <React.Fragment>
-      <MetaTags>
-        {pageTitle ? <title>{pageTitle} | MyArchery.id</title> : <title>MyArchery.id</title>}
-      </MetaTags>
-
+    <PageWrapper title={pageTitle ? `${pageTitle} | MyArchery.id` : "MyArchery.id"}>
       {navbar}
-
       <Container fluid>
         <BreadcrumbDashboard to={backButtonURL}>Kembali</BreadcrumbDashboard>
         <StyledPageWrapper>{children}</StyledPageWrapper>
       </Container>
-    </React.Fragment>
+    </PageWrapper>
   );
-}
+};
 
 const StyledPageWrapper = styled.div`
   margin: 2.5rem 0;
@@ -35,4 +29,4 @@ const StyledPageWrapper = styled.div`
   }
 `;
 
-export { ContentLayoutWrapper };
+export default ContentLayoutWrapper;

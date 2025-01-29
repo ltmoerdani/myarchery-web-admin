@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { withRouter } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // Import komponen lain yang terkait dengan Layout
 import Navbar from "./Navbar";
@@ -7,7 +7,10 @@ import Header from "./Header";
 import Footer from "./Footer";
 
 // Functional Component untuk Layout
-const Layout = (props) => {
+const LayoutHorizontal = (props) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   // State untuk mengelola apakah menu terbuka atau tidak
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
@@ -51,5 +54,5 @@ const Layout = (props) => {
   );
 };
 
-// Membungkus komponen dengan withRouter untuk mendapatkan akses ke props history
-export default withRouter(Layout);
+// Export without withRouter
+export { LayoutHorizontal };

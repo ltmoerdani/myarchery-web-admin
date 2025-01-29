@@ -1,37 +1,80 @@
-import { AvField, AvForm } from "availity-reactstrap-validation"
 import React from "react"
-import MetaTags from 'react-meta-tags'
 import { Link } from "react-router-dom"
-import {
-  Card,
-  CardBody,
-  Col,
-  Container, Row
-} from "reactstrap"
+import { Card, CardBody, Col, Container, Row } from "reactstrap"
+import { Formik, Form, Field } from "formik"
 import logo from "../../../assets/images/logo.svg"
 import profile from "../../../assets/images/profile-img.png"
 
 const RecoverPassword = () => {
+  const validate = values => {
+    const errors = {}
+    if (!values.email) {
+      errors.email = "Required"
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+      errors.email = "Invalid email address"
+    }
+    return errors
+  }
+
+  const handleSubmit = (values, { setSubmitting }) => {
+    // Handle your form submission logic here
+    console.log(values)
+    setSubmitting(false)
+  }
+
   return (
-    <div className="account-pages my-5 pt-sm-5">
-      <MetaTags>
-        <title>Recover Password | MyArchery</title>
-      </MetaTags>
-      <Container>
-        <Row className="justify-content-center">
-          <Col md={8} lg={6} xl={5}>
-            <Card className="overflow-hidden">
-              <HeaderSection />
-              <CardBody className="pt-0">
-                <LogoSection />
-                <FormSection />
-              </CardBody>
-            </Card>
-            <FooterSection />
-          </Col>
-        </Row>
-      </Container>
-    </div>
+    <React.Fragment>
+      <div className="account-pages my-5 pt-sm-5">
+        <Container>
+          <Row className="justify-content-center">
+            <Col md={8} lg={6} xl={5}>
+              <Card className="overflow-hidden">
+                <HeaderSection />
+                <CardBody className="pt-0">
+                  <LogoSection />
+                  <div className="p-2">
+                    <div className="alert alert-success text-center mb-4" role="alert">
+                      Enter your Email and instructions will be sent to you!
+                    </div>
+                    <Formik
+                      initialValues={{ email: "" }}
+                      validate={validate}
+                      onSubmit={handleSubmit}
+                    >
+                      {({ errors, touched, isSubmitting }) => (
+                        <Form className="form-horizontal mt-4">
+                          <div className="mb-3">
+                            <Field
+                              name="email"
+                              type="email"
+                              className={`form-control ${errors.email && touched.email ? "is-invalid" : ""}`}
+                              placeholder="Enter email"
+                            />
+                            {errors.email && touched.email && (
+                              <div className="invalid-feedback">{errors.email}</div>
+                            )}
+                          </div>
+                          <div className="mt-4">
+                            <button
+                              className="btn btn-primary w-100 waves-effect waves-light"
+                              type="submit"
+                              disabled={isSubmitting}
+                            >
+                              Reset
+                            </button>
+                          </div>
+                        </Form>
+                      )}
+                    </Formik>
+                  </div>
+                </CardBody>
+              </Card>
+              <FooterSection />
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </React.Fragment>
   )
 }
 
@@ -60,31 +103,6 @@ const LogoSection = () => (
         </span>
       </div>
     </Link>
-  </div>
-)
-
-const FormSection = () => (
-  <div className="p-2">
-    <div className="alert alert-success text-center mb-4" role="alert">
-      Enter your Email and instructions will be sent to you!
-    </div>
-    <AvForm className="form-horizontal">
-      <div className="mb-3">
-        <AvField
-          name="email"
-          label="Email"
-          className="form-control"
-          placeholder="Enter email"
-          type="email"
-          required
-        />
-      </div>
-      <div className="text-end">
-        <button className="btn btn-primary w-md" type="submit">
-          Reset
-        </button>
-      </div>
-    </AvForm>
   </div>
 )
 

@@ -1,11 +1,12 @@
 import * as React from "react";
 import styled from "styled-components";
 
-import MetaTags from "react-meta-tags";
 import { Container } from "reactstrap";
 import { ProcessingToast } from "components/ma/processing-toast";
 import { ErrorBoundary } from "components/ma/error-boundary";
 import { Breadcrumb } from "./components/breadcrumb";
+import PropTypes from "prop-types";
+import { setPageTitle } from "utils/title";
 
 function PageWrapper({
   children,
@@ -23,12 +24,13 @@ function PageWrapper({
     breadcrumbLink: breadcrumbLink,
     unconstrained: unconstrained,
   };
+
+  React.useEffect(() => {
+    setPageTitle(pageTitle);
+  }, [pageTitle]);
+
   return (
     <React.Fragment>
-      <MetaTags>
-        {pageTitle ? <title>{pageTitle} | MyArchery.id</title> : <title>MyArchery.id</title>}
-      </MetaTags>
-
       {before}
       {navbar ? (
         <LayoutNavbar {...commonLayoutProps} navbar={navbar}>
@@ -47,6 +49,11 @@ function PageWrapper({
     </React.Fragment>
   );
 }
+
+PageWrapper.propTypes = {
+  children: PropTypes.node,
+  pageTitle: PropTypes.string,
+};
 
 function LayoutPlain({ children, unconstrained = false, breadcrumbText, breadcrumbLink }) {
   return (

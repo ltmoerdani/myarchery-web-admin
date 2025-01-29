@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { MetaTags } from 'react-meta-tags'
+import { PageWrapper } from "components/ma/page-wrapper";
 import {
     Container,
     Button,
@@ -19,11 +19,8 @@ function ListScoring() {
     const [open] = useState(true)
 
     return (
-        <React.Fragment>
+        <PageWrapper title="Dashboard | List - Scoring">
             <div className="page-content">
-                <MetaTags>
-                    <title>Dashboard | List - Scoring</title>
-                </MetaTags>
                 <Container fluid>
                 <Link to="/dashboard">
                     <Button color="outline-dark">{'<-'}</Button>
@@ -95,7 +92,7 @@ function ListScoring() {
                 )}
                 </Container>
             </div>
-        </React.Fragment>
+        </PageWrapper>
     )
 }
 

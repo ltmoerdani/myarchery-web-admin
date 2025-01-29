@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { components } from "react-select";
@@ -47,23 +48,41 @@ function BudrestNumberChooser({ selectedNumber, options, onSubmit }) {
   }, [tempSelected])
 
   return (
-    <React.Fragment>
-      <StyledWrapper>
-        <MemoizedCreatableSelect
-          options={options}
-          placeholder="-"
-          value={selectedOption}
-          styles={customSelectStyles}
-          onChange={handleNumberChange}
-          onCreateOption={handleCreateNumber}
-          formatCreateLabel={formatCreateLabel}
-          components={customComponents}
-          isOptionDisabled={isOptionDisabled}
-        />
-      </StyledWrapper>
-    </React.Fragment>
+    <StyledWrapper>
+      <MemoizedCreatableSelect
+        options={options}
+        placeholder="-"
+        value={selectedOption}
+        styles={customSelectStyles}
+        onChange={handleNumberChange}
+        onCreateOption={handleCreateNumber}
+        formatCreateLabel={formatCreateLabel}
+        components={customComponents}
+        isOptionDisabled={isOptionDisabled}
+      />
+    </StyledWrapper>
   );
 }
+
+BudrestNumberChooser.propTypes = {
+  selectedNumber: PropTypes.string,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+      isEmpty: PropTypes.bool
+    })
+  ).isRequired,
+  onSubmit: PropTypes.func
+};
+
+Option.propTypes = {
+  children: PropTypes.node.isRequired,
+  data: PropTypes.shape({
+    __isNew__: PropTypes.bool,
+    isEmpty: PropTypes.bool
+  }).isRequired
+};
 
 function Option({ children, ...props }) {
   if (props.data.__isNew__) {

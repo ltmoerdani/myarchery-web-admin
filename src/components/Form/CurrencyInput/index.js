@@ -1,10 +1,10 @@
-import * as React from "react";
+import React from 'react';
+import PropTypes from "prop-types";
 import _ from "lodash";
 import stringUtil from "utils/stringUtil";
 import { useFieldValidation } from "utils/hooks/field-validation";
 
 import { Col, Label } from "reactstrap";
-import CurrencyFormat from "react-currency-format";
 
 const CurrencyInput = ({
   name,
@@ -18,13 +18,13 @@ const CurrencyInput = ({
 }) => {
   const { errors, handleFieldValidation } = useFieldValidation(name);
 
-  const handleChange = (ev) => {
-    if (onChange) {
-      onChange({
-        key: name,
-        value: !isNaN(ev.floatValue) ? ev.floatValue : undefined,
-      });
-    }
+  const handleChange = (e) => {
+    const value = e.target.value.replace(/[^\d]/g, '');
+    onChange(value);
+  };
+
+  const formatValue = (val) => {
+    return new Intl.NumberFormat('id-ID').format(val);
   };
 
   const handleBlur = () => {
@@ -40,14 +40,10 @@ const CurrencyInput = ({
           </Label>
         )}
         <Col sm={6}>
-          <CurrencyFormat
+          <input
             id={id}
-            displayType={"input"}
-            prefix={"Rp "}
-            thousandSeparator={"."}
-            decimalSeparator={","}
-            value={value || ""} // fallback string kosongan kalau value === undefined
-            onValueChange={(e) => handleChange(e)}
+            value={formatValue(value)}
+            onChange={handleChange}
             onBlur={handleBlur}
             className={`form-control ${_.get(errors, name) ? "is-invalid" : ""}`}
             disabled={disabled}
@@ -66,14 +62,10 @@ const CurrencyInput = ({
   return (
     <div>
       {label && <Label>{label}</Label>}
-      <CurrencyFormat
+      <input
         id={id}
-        displayType={"input"}
-        prefix={"Rp "}
-        thousandSeparator={"."}
-        decimalSeparator={","}
-        value={value || ""} // fallback string kosongan kalau value === undefined
-        onValueChange={(e) => handleChange(e)}
+        value={formatValue(value)}
+        onChange={handleChange}
         onBlur={handleBlur}
         className={`form-control ${_.get(errors, name) ? "is-invalid" : ""}`}
         disabled={disabled}
@@ -85,6 +77,17 @@ const CurrencyInput = ({
       ))}
     </div>
   );
+};
+
+CurrencyInput.propTypes = {
+  name: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  label: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  onChange: PropTypes.func,
+  horizontal: PropTypes.bool,
+  disabled: PropTypes.bool,
+  readOnly: PropTypes.bool
 };
 
 export default CurrencyInput;

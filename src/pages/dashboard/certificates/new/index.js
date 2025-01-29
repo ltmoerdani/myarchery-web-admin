@@ -29,6 +29,17 @@ import PreviewCanvas from "../components/preview/PreviewCanvas";
 
 const { LABEL_MEMBER_NAME, LABEL_CATEGORY_NAME } = certificateFields;
 
+import React from "react"
+import { PageWrapper } from "components/ma/page-wrapper"
+
+const NewCertificatePage = () => {
+  return (
+    <PageWrapper title="New Certificate">
+      <CertificateNew />
+    </PageWrapper>
+  )
+}
+
 function CertificateNew() {
   const event_id = new URLSearchParams(useLocation().search).get("event_id");
   const eventId = parseInt(event_id);
@@ -496,4 +507,4 @@ const getDefaultEditorData = () => ({
   ],
 });
 
-export default CertificateNew;
+export default NewCertificatePage;

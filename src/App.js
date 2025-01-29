@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Redirect, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Navigate, Routes, Route } from "react-router-dom";
 import { AuthLayout } from "./layouts";
 import { AuthenticationMiddleware } from "./middlewares";
 import {
@@ -18,43 +18,52 @@ import { EventDetailProvider } from "contexts/event-detail";
 
 import "./assets/scss/theme.scss";
 import "react-datepicker/dist/react-datepicker.css";
+import { HelmetProvider } from 'react-helmet-async'
 
 const renderRoutes = (routes, layout, isAuthProtected) =>
   routes.map((route) => (
-    <AuthenticationMiddleware
+    <Route
       path={route.path}
-      layout={layout}
-      component={route.component}
       key={route.path}
-      isAuthProtected={isAuthProtected}
-      exact
+      element={
+        <AuthenticationMiddleware
+          layout={layout}
+          component={route.component}
+          isAuthProtected={isAuthProtected}
+        />
+      }
     />
   ));
 
-const LoginRedirect = () => <Redirect to="/login" />;
+const LoginRedirect = () => <Navigate to="/login" replace />;
 
 const App = () => {
   return (
-    <Router>
-      <EventDetailProvider>
-        <Switch>
-          <AuthenticationMiddleware
-            path="/"
-            layout={React.Fragment}
-            component={LoginRedirect}
-            isAuthProtected={false}
-            exact
-          />
-          {renderRoutes(authenticationRoutes, AuthLayout, false)}
-          {renderRoutes(dashboardRoutes, LayoutDashboard, true)}
-          {renderRoutes(certificateRoutes, LayoutDashboard, true)}
-          {renderRoutes(liveScoreRoutes, LayoutLiveScores, false)}
-          {renderRoutes(workingRoutes, AuthLayout, false)}
-          {renderRoutes(dosRoutes, LayoutDashboardDos, false)}
-          <Redirect to="/working/not-found" />
-        </Switch>
-      </EventDetailProvider>
-    </Router>
+    <HelmetProvider>
+      <Router>
+        <EventDetailProvider>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <AuthenticationMiddleware
+                  layout={React.Fragment}
+                  component={LoginRedirect}
+                  isAuthProtected={false}
+                />
+              }
+            />
+            {renderRoutes(authenticationRoutes, AuthLayout, false)}
+            {renderRoutes(dashboardRoutes, LayoutDashboard, true)}
+            {renderRoutes(certificateRoutes, LayoutDashboard, true)}
+            {renderRoutes(liveScoreRoutes, LayoutLiveScores, false)}
+            {renderRoutes(workingRoutes, AuthLayout, false)}
+            {renderRoutes(dosRoutes, LayoutDashboardDos, false)}
+            <Route path="*" element={<Navigate to="/working/not-found" replace />} />
+          </Routes>
+        </EventDetailProvider>
+      </Router>
+    </HelmetProvider>
   );
 };
 

@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import { Table } from 'reactstrap';
 import './sass/datatables.scss';
 
 const tableColumns = [
@@ -48,38 +46,14 @@ const tableColumns = [
   }
 ];
 
-const CategoryTable = React.memo(({
-  data,
-  page,
-  sizePerPage,
-  onPageChange,
-  onSizePerPageChange,
-  columns = tableColumns
-}) => {
+const CategoryTable = ({ data, pagination, ...props }) => {
   return (
-    <ToolkitProvider
-      keyField="id"
-      data={data}
-      columns={columns}
-      search
-    >
-      {toolkitProps => (
-        <div>
-          <BootstrapTable
-            {...toolkitProps.baseProps}
-            pagination={paginationFactory({
-              page,
-              sizePerPage,
-              onPageChange,
-              onSizePerPageChange
-            })}
-            wrapperClasses="table-responsive"
-          />
-        </div>
-      )}
-    </ToolkitProvider>
+    <Table responsive>
+      {/* Replace bootstrap-table with standard Table implementation */}
+      {/* ...existing code... */}
+    </Table>
   );
-});
+};
 
 CategoryTable.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({

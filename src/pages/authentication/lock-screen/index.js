@@ -1,8 +1,8 @@
-import React from "react"
-import MetaTags from 'react-meta-tags';
+import React, { useState } from "react";
+import { PageWrapper } from "components/ma/page-wrapper";
+import { FormField } from "components/ma/form-field";
 
 // availity-reactstrap-validation
-import { AvForm, AvField } from "availity-reactstrap-validation"
 import { Link } from "react-router-dom"
 
 import { Container, Row, Col, CardBody, Card, Button } from "reactstrap"
@@ -13,11 +13,25 @@ import logoImg from "../../../assets/images/logo.svg"
 import avatar from "../../../assets/images/users/avatar-man.png"
 
 const LockScreen = () => {
+  const [formData, setFormData] = useState({ password: "" });
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.password) {
+      setErrors({ password: "Password is required" });
+      return;
+    }
+    // Handle form submission
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
   return (
-    <React.Fragment>
-      <MetaTags>
-        <title>Lock Screen | MyArchery</title>
-      </MetaTags>
+    <PageWrapper title="Lock Screen">
       <div className="home-btn d-none d-sm-block">
         <Link to="/" className="text-dark">
           <i className="fas fa-home h2" />
@@ -57,7 +71,7 @@ const LockScreen = () => {
                     </Link>
                   </div>
                   <div className="p-2">
-                    <AvForm className="form-horizontal">
+                    <form className="form-horizontal" onSubmit={handleSubmit}>
                       <div className="user-thumb text-center mb-4">
                         <img
                           src={avatar}
@@ -67,28 +81,25 @@ const LockScreen = () => {
                         <h5 className="font-size-15 mt-3">Maria Laird</h5>
                       </div>
 
-                      <div className="mb-3">
-                        <AvField
-                          name="password"
-                          label="Password"
-                          type="password"
-                          required
-                          placeholder="Enter Password"
-                        />
-                      </div>
+                      <FormField
+                        name="password"
+                        label="Password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                        placeholder="Enter Password"
+                        required
+                      />
 
                       <div className="text-end">
                         <Col xs="12" className="text-end">
-                          <Button
-                            color="primary"
-                            className=" w-md "
-                            type="submit"
-                          >
+                          <button className="btn btn-primary w-md" type="submit">
                             Unlock
-                            </Button>
+                          </button>
                         </Col>
                       </div>
-                    </AvForm>
+                    </form>
                   </div>
                 </CardBody>
               </Card>
@@ -112,7 +123,7 @@ const LockScreen = () => {
           </Row>
         </Container>
       </div>
-    </React.Fragment>
+    </PageWrapper>
   )
 }
 export default LockScreen

@@ -1,94 +1,39 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import { GeneralService } from "services";
+import React from "react";
+import AsyncSelect from "react-select/async";
+import { stringUtil } from "utils";
+import { SelectContainer } from "./styles";
 
-import { AsyncPaginate } from "react-select-async-paginate";
-import { customSelectStyles } from "./select-options";
+const SelectCity = ({ value, onChange, error }) => {
+  const loadOptions = async (inputValue) => {
+    try {
+      const params = new URLSearchParams({ name: inputValue });
+      const response = await fetch(`/api/cities?${params}`);
+      const data = await response.json();
 
-const FETCHING_LIMIT = 30;
-
-function SelectCity({ name, placeholder, value, provinceId, onChange, errors, disabled }) {
-  const [localOptions, setLocalOptions] = React.useState([]);
-
-  React.useEffect(() => {
-    if (!provinceId) {
-      return;
+      return data.map((city) => ({
+        value: city.id,
+        label: stringUtil.capitalize(city.name),
+      }));
+    } catch (error) {
+      console.error("Error loading cities:", error);
+      return [];
     }
-    onChange?.();
-  }, [provinceId]);
-
-  const loadOptions = async (searchQuery, loadedOptions, { page }) => {
-    const result = await GeneralService.getCities({
-      limit: FETCHING_LIMIT,
-      page: page,
-      name: searchQuery,
-      province_id: provinceId,
-    });
-    const options = result.data.map((city) => ({
-      label: city.name,
-      value: parseInt(city.id),
-    }));
-    setLocalOptions([...loadedOptions, ...options]);
-    return {
-      options: options,
-      hasMore: result.data.length >= FETCHING_LIMIT,
-      additional: { page: page + 1 },
-    };
   };
 
   return (
-    <AsyncPaginate
-      key={provinceId}
-      styles={computeCustomStylesWithValidation(errors)}
-      name={name}
-      loadOptions={loadOptions}
-      placeholder={placeholder}
-      value={_getOptionByValue(localOptions, value)}
-      onChange={(opt) => onChange?.(opt.value)}
-      isSearchable
-      debounceTimeout={200}
-      additional={{ page: 1 }}
-      isDisabled={disabled}
-    />
+    <SelectContainer>
+      <AsyncSelect
+        value={value}
+        onChange={onChange}
+        loadOptions={loadOptions}
+        placeholder="Pilih kota"
+        className={error ? "is-invalid" : ""}
+        defaultOptions
+        cacheOptions
+      />
+      {error && <div className="invalid-feedback">{error}</div>}
+    </SelectContainer>
   );
-}
-
-SelectCity.propTypes = {
-  name: PropTypes.string,
-  placeholder: PropTypes.string,
-  value: PropTypes.number,
-  provinceId: PropTypes.number,
-  onChange: PropTypes.func,
-  errors: PropTypes.arrayOf(PropTypes.string),
-  disabled: PropTypes.bool,
 };
 
-SelectCity.defaultProps = {
-  name: "",
-  placeholder: "Pilih Kota",
-  value: null,
-  provinceId: null,
-  onChange: () => {},
-  errors: [],
-  disabled: false,
-};
-
-const computeCustomStylesWithValidation = (errors) => {
-  if (errors?.length) {
-    return {
-      ...customSelectStyles,
-      control: (provided) => ({
-        ...provided,
-        border: "solid 1px var(--ma-red)",
-      }),
-    };
-  }
-  return customSelectStyles;
-};
-
-const _getOptionByValue = (numberList, value) => {
-  const foundOption = numberList.find((option) => option.value === value);
-  return foundOption || null;
-};
-
-export { SelectCity };
+export default SelectCity;

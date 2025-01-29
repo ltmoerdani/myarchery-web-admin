@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { withRouter } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 // Import komponen lain yang terkait dengan Layout
 import Header from "./Header";
 import Footer from "./Footer";
 
 const EventLayout = (props) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   // Contoh penggunaan state untuk mengelola kondisi tertentu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -37,5 +40,4 @@ const EventLayout = (props) => {
   );
 };
 
-// Membungkus komponen dengan withRouter untuk mendapatkan akses ke props history
-export default withRouter(EventLayout);
+export { EventLayout };

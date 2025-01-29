@@ -1,7 +1,6 @@
-// availity-reactstrap-validation
-import { AvField, AvForm } from "availity-reactstrap-validation";
-import React from "react";
-import MetaTags from 'react-meta-tags';
+import React, { useState } from "react";
+import { PageWrapper } from "components/ma/page-wrapper";
+import { FormField } from "components/ma/form-field";
 import { Link } from "react-router-dom";
 import { Alert, Card, CardBody, Col, Container, Row } from "reactstrap";
 import logo from "../../../assets/images/logo.svg";
@@ -9,15 +8,26 @@ import logo from "../../../assets/images/logo.svg";
 import profile from "../../../assets/images/profile-img.png";
 
 const ForgetPasswordPage = props => {
-  function handleValidSubmit(event, values) {
-    props.userForgetPassword(values, props.history)
-  }
+  const [formData, setFormData] = useState({ email: "" });
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Validation
+    if (!formData.email) {
+      setErrors({ email: "Email is required" });
+      return;
+    }
+    props.userForgetPassword(formData, props.history);
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
 
   return (
-    <React.Fragment>
-      <MetaTags>
-        <title>Forget Password | MyArchery</title>
-      </MetaTags>
+    <PageWrapper title="Forget Password">
       <div className="home-btn d-none d-sm-block">
         <Link to="/" className="text-dark">
           <i className="fas fa-home h2" />
@@ -68,31 +78,23 @@ const ForgetPasswordPage = props => {
                       </Alert>
                     ) : null}
 
-                    <AvForm
-                      className="form-horizontal"
-                      onValidSubmit={(e, v) => handleValidSubmit(e, v)}
-                    >
-                      <div className="mb-3">
-                        <AvField
-                          name="email"
-                          label="Email"
-                          className="form-control"
-                          placeholder="Enter email"
-                          type="email"
-                          required
-                        />
+                    <form className="form-horizontal" onSubmit={handleSubmit}>
+                      <FormField
+                        name="email"
+                        label="Email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        error={errors.email}
+                        placeholder="Enter email"
+                        required
+                      />
+                      <div className="text-end">
+                        <button className="btn btn-primary w-md" type="submit">
+                          Reset
+                        </button>
                       </div>
-                      <Row className="mb-3">
-                        <Col className="text-end">
-                          <button
-                            className="btn btn-primary w-md "
-                            type="submit"
-                          >
-                            Reset
-                          </button>
-                        </Col>
-                      </Row>
-                    </AvForm>
+                    </form>
                   </div>
                 </CardBody>
               </Card>
@@ -112,7 +114,7 @@ const ForgetPasswordPage = props => {
           </Row>
         </Container>
       </div>
-    </React.Fragment>
+    </PageWrapper>
   )
 }
 

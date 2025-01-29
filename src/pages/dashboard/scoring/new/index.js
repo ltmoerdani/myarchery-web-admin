@@ -11,10 +11,11 @@ import { SelectInput } from 'components'
 import { Link } from 'react-router-dom'
 import { dummyConstants } from '../../../../constants'
 import copy from '../../../../assets/images/myachery/copy.png'
+import { PageWrapper } from "components/ma/page-wrapper";
 
-function ScoringNew() {
+const NewScoringPage = () => {
     return (
-        <React.Fragment>
+        <PageWrapper title="Dashboard | New Scoring">
             <div className="page-content">
                 <MetaTags>
                     <title>Dashboard | List - Member</title>
@@ -91,8 +92,8 @@ function ScoringNew() {
                 <Button color="outline-dark">Tambah Scoring</Button>
                 </Container>
             </div>
-        </React.Fragment>
+        </PageWrapper>
     )
 }
 
-export default ScoringNew
+export default NewScoringPage

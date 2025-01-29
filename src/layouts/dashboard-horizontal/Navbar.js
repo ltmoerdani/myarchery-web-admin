@@ -2,10 +2,12 @@ import classname from "classnames";
 import React, { useEffect, useState } from "react";
 //i18n
 import { withTranslation } from "react-i18next";
-import { Link, withRouter } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Collapse } from "reactstrap";
 
 const Navbar = props => {
+  const location = useLocation();
+  const navigate = useNavigate();
   // const [app, setapp] = useState(false);
   const [event, setEvent] = useState(false)
 
@@ -14,7 +16,7 @@ const Navbar = props => {
     var ul = document.getElementById("navigation");
     var items = ul.getElementsByTagName("a");
     for (var i = 0; i < items.length; ++i) {
-      if (props.location.pathname === items[i].pathname) {
+      if (location.pathname === items[i].pathname) {
         matchingMenuItem = items[i];
         break;
       }
@@ -131,4 +133,4 @@ const Navbar = props => {
   );
 };
 
-export default withRouter(withTranslation()(Navbar));
+export default withTranslation()(Navbar);

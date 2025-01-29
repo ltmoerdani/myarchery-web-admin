@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import { useUserProfile } from "hooks/user-profile";
 import { useLocation as useAdministativeLocation } from "utils/hooks/location";
@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 import user1 from "assets/images/users/avatar-man.png";
 
 const ProfileMenu = (props) => {
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { userProfile } = useUserProfile({ forceFetchOnMount: true });
   useAdministativeLocation();
 
@@ -30,7 +30,7 @@ const ProfileMenu = (props) => {
 
   const handleShowConfirmLogout = () => setConfirmLogout(true);
   const handleCancelLogout = () => setConfirmLogout(false);
-  const handleLogout = () => push("/logout");
+  const handleLogout = () => navigate("/logout");
 
   const avatarURL = _getAvatarURL(userProfile?.avatar, user1);
 
@@ -75,7 +75,19 @@ const ProfileMenu = (props) => {
           <i className="mdi mdi-chevron-down d-none d-xl-inline-block" />
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-end">
-          <DropdownItem tag="a" href="/logout" className="dropdown-item">
+          <DropdownItem onClick={() => navigate("/profile")}>
+            <i className="bx bx-user font-size-16 align-middle me-1" />
+            <span>{props.t("Profile")}</span>
+          </DropdownItem>
+          
+          <DropdownItem onClick={() => navigate("/archery-events")}>
+            <i className="bx bx-target-lock font-size-16 align-middle me-1" />
+            <span>{props.t("Set Archery Event")}</span>
+          </DropdownItem>
+
+          <div className="dropdown-divider" />
+          
+          <DropdownItem onClick={() => setConfirmLogout(true)}>
             <i className="bx bx-power-off font-size-16 align-middle me-1 text-danger" />
             <span>{props.t("Logout")}</span>
           </DropdownItem>

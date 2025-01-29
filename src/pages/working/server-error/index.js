@@ -1,6 +1,6 @@
 import React from "react"
 import { Link } from "react-router-dom"
-import MetaTags from 'react-meta-tags';
+import { Helmet } from "react-helmet-async"
 import { Container, Row, Col } from "reactstrap"
 
 //Import Images
@@ -9,10 +9,10 @@ import error from "../../../assets/images/error-img.png"
 const ServerError = () => {
   return (
     <React.Fragment>
-      <div className="account-pages my-5 pt-5">
-        <MetaTags>
-          <title>500 Error Page | MyArchery</title>
-        </MetaTags>
+      <Helmet>
+        <title>500 Server Error | MyArchery</title>
+      </Helmet>
+      <div className="page-content">
         <Container>
           <Row>
             <Col lg="12">

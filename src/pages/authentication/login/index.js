@@ -1,32 +1,52 @@
 // import logo from "assets/images/logo.svg"
 // import images
 // import profile from "assets/images/profile-img.png"
-// availity-reactstrap-validation
-import { AvField, AvForm } from "availity-reactstrap-validation"
 import myachery from "assets/images/myachery/logo 3.png"
 // import gmail from "assets/images/myachery/gmail.png"
 // import google from "assets/images/myachery/Google.png"
 // import facebook from "assets/images/myachery/Facebook.png"
 // import ladBg from "assets/images/myachery/achery-lad.png"
 import React, { useEffect, useState } from "react"
-import MetaTags from "react-meta-tags"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory, Link } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { Col, Row, Container, Card, CardBody } from "reactstrap"
 import { AuthenticationService } from "services"
 //Import config
 import * as AuthenticationStore from "store/slice/authentication"
 import toastr from "toastr"
+import { PageWrapper } from "components/ma/page-wrapper"
+import { FormField } from "components/ma/form-field"
 
 const Login = () => {
   const dispatch = useDispatch()
   const { isLoggedIn } = useSelector(AuthenticationStore.getAuthenticationStore)
-  let history = useHistory()
+  const navigate = useNavigate()
   const [loginErrors, setLoginErrors] = useState()
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({});
 
-  const handleValidSubmit = async (event, values) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Add validation
+    const newErrors = {};
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     const { data, errors, message, success } =
-      await AuthenticationService.login(values)
+      await AuthenticationService.login(formData)
     if (success) {
       if (data) {
         dispatch(AuthenticationStore.login(data))
@@ -36,21 +56,18 @@ const Login = () => {
       setLoginErrors(errors)
       toastr.error(message)
     }
-  }
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
-      history.push("/dashboard")
+      navigate("/dashboard")
     }
   }, [isLoggedIn])
 
   console.log(loginErrors)
 
   return (
-    <React.Fragment>
-      <MetaTags>
-        <title>Login | MyArchery</title>
-      </MetaTags>
+    <PageWrapper title="Login | MyArchery">
       <div className="home-btn d-none d-sm-block">
         <Link to="/" className="text-dark">
           <i className="fas fa-home h2" />
@@ -90,37 +107,28 @@ const Login = () => {
                     </Link>
                   </div>
                   <div className="p-2">
-                    <AvForm
-                      className="form-horizontal"
-                      onValidSubmit={(e, v) => {
-                        handleValidSubmit(e, v)
-                      }}
-                    >
-                      <div className="mb-3">
-                        <AvField
-                          name="email"
-                          label="Email"
-                          className="form-control"
-                          placeholder="Enter email"
-                          type="email"
-                          required
-                        />
-                        {loginErrors?.email ? (
-                          <div className="validated-response">
-                            {loginErrors?.email.join(", ")}
-                          </div>
-                        ) : null}
-                      </div>
+                    <form className="form-horizontal" onSubmit={handleSubmit}>
+                      <FormField
+                        name="email"
+                        label="Email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        error={errors.email}
+                        placeholder="Enter email"
+                        required
+                      />
 
-                      <div className="mb-3">
-                        <AvField
-                          name="password"
-                          label="Password"
-                          type="password"
-                          required
-                          placeholder="Enter Password"
-                        />
-                      </div>
+                      <FormField
+                        name="password"
+                        label="Password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                        placeholder="Enter password"
+                        required
+                      />
 
                       <div className="form-check">
                         <input
@@ -162,7 +170,7 @@ const Login = () => {
                           Forgot your password?
                         </Link>
                       </div>
-                    </AvForm>
+                    </form>
                   </div>
                 </CardBody>
               </Card>
@@ -183,7 +191,7 @@ const Login = () => {
           </Row>
         </Container>
       </div>
-    </React.Fragment>
+    </PageWrapper>
    )
 }
 

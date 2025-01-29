@@ -1,24 +1,18 @@
-import * as React from "react";
+import React from "react";
 import styled from "styled-components";
-
-import MetaTags from "react-meta-tags";
 import { Container } from "reactstrap";
+import { PageWrapper } from "components/ma/page-wrapper";
 
-function ContentLayoutWrapper({ children, pageTitle, navbar }) {
+const ContentLayoutWrapper = ({ children, pageTitle, navbar }) => {
   return (
-    <React.Fragment>
-      <MetaTags>
-        {pageTitle ? <title>{pageTitle} | MyArchery.id</title> : <title>MyArchery.id</title>}
-      </MetaTags>
-
+    <PageWrapper title={pageTitle}>
       {navbar}
-
       <Container fluid>
         <StyledPageWrapper>{children}</StyledPageWrapper>
       </Container>
-    </React.Fragment>
+    </PageWrapper>
   );
-}
+};
 
 const StyledPageWrapper = styled.div`
   margin: 2.5rem 0;

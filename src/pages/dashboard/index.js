@@ -2,7 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import MetaTags from "react-meta-tags";
+import { PageWrapper } from "components/ma/page-wrapper";
 import { Container, Row, Col } from "reactstrap";
 import { LatestEventList, CardUserProfile, CardMenuManageUsers } from "./components";
 
@@ -10,11 +10,7 @@ const hrefToListEvent = `/dashboard/event`;
 
 const Dashboard = () => {
   return (
-    <StyledPageWrapper>
-      <MetaTags>
-        <title>Dashboard | MyArchery.id</title>
-      </MetaTags>
-
+    <PageWrapper title="Dashboard | MyArchery">
       <Container fluid className="mt-4 mb-5">
         <h1>Dashboard</h1>
         <p>Atur akun &amp; eventmu di sini</p>
@@ -39,7 +35,7 @@ const Dashboard = () => {
            <h4 style={{ color: "var(--ma-blue)", textAlign: "center", marginTop: 48}} > Lihat Semua Event </h4>
           </Link>
       </Container>
-    </StyledPageWrapper>
+    </PageWrapper>
   );
 };
 

@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { GeneralService } from "services";
 
-import { AsyncPaginate } from "react-select-async-paginate";
+import AsyncSelect from "react-select/async";
 
 const FieldSelectWrapper = styled.div`
   .field-label {
@@ -59,50 +59,38 @@ const computeCustomStylesWithValidation = (errors) => {
 
 const FETCHING_LIMIT = 30;
 
-function FieldSelect({
-  children,
-  label,
-  name,
-  placeholder,
-  required,
-  value,
-  onChange,
-  errors,
-  disabled,
-}) {
-  const loadOptions = async (searchQuery, loadedOptions, { page }) => {
-    const result = await GeneralService.getCities({
-      limit: FETCHING_LIMIT,
-      page: page,
-      name: searchQuery,
-    });
-    return {
-      options: result.data.map((city) => ({ label: city.name, value: city.id })),
-      hasMore: result.data.length >= FETCHING_LIMIT,
-      additional: { page: page + 1 },
-    };
+function FieldSelectCity({ label, value, onChange, error }) {
+  const loadOptions = async (inputValue) => {
+    try {
+      const params = new URLSearchParams({ name: inputValue });
+      const response = await fetch(`/api/cities?${params}`);
+      const data = await response.json();
+
+      return data.map((city) => ({
+        value: city.id,
+        label: city.name,
+      }));
+    } catch (error) {
+      console.error("Error loading cities:", error);
+      return [];
+    }
   };
 
   return (
     <FieldSelectWrapper>
-      <label className="field-label">
-        {children || label}
-        {required && <span className="field-required">*</span>}
-      </label>
-      <AsyncPaginate
-        styles={computeCustomStylesWithValidation(errors)}
-        name={name}
-        loadOptions={loadOptions}
-        placeholder={placeholder}
+      {label && <label className="field-label">{label}</label>}
+      <AsyncSelect
         value={value}
         onChange={onChange}
-        isSearchable
-        debounceTimeout={200}
-        additional={{ page: 1 }}
-        isDisabled={disabled}
+        loadOptions={loadOptions}
+        placeholder="Pilih kota"
+        className={error ? "is-invalid" : ""}
+        defaultOptions
+        cacheOptions
       />
+      {error && <div className="invalid-feedback">{error}</div>}
     </FieldSelectWrapper>
   );
 }
 
-export default FieldSelect;
+export default FieldSelectCity;

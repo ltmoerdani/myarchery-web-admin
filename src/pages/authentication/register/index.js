@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useHistory, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as AuthenticationStore from "store/slice/authentication";
 import toastr from "toastr";
 import { useSubmitRegister } from "./hooks/submit-register";
 
-import MetaTags from "react-meta-tags";
+import { PageWrapper } from "components/ma/page-wrapper";
 import { Col, Container, Row, Card, CardBody } from "reactstrap";
-import { AvField, AvForm } from "availity-reactstrap-validation";
+import { FormField } from "components/ma/form-field";
 import { ButtonBlue, ButtonGhostBlue, LoadingScreen } from "components/ma";
 import { ProcessingToast, toast } from "./components/processing-toast";
 import { SelectInfoSource } from "./components/select-info-source";
@@ -22,15 +22,63 @@ import myachery from "assets/images/myachery/logo 3.png";
 
 const Register = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { isLoggedIn } = useSelector(AuthenticationStore.getAuthenticationStore);
-  const [screen, setScreen] = React.useState(0);
-  const [provinceId, setProvinceId] = React.useState();
-  const [formStep1, setFormStep1] = React.useState(null);
+  const [screen, setScreen] = useState(0);
+  const [provinceId, setProvinceId] = useState();
+  const [formStep1, setFormStep1] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    password_confirmation: "",
+  });
+  const [formStep2, setFormStep2] = useState({
+    province: "",
+    city: "",
+    questionnaire_source: "",
+    questionnaire_motive: "",
+    questionnaire_event_name: "",
+    questionnaire_event_description: "",
+  });
+  const [errors, setErrors] = useState({});
   const { submit, isLoading, isSuccess, data: submitSuccessData } = useSubmitRegister();
 
-  const handleValidSubmit = async (values) => {
-    const payload = _makePayload(formStep1, values);
+  const handleChange = (step) => (e) => {
+    const { name, value } = e.target;
+    if (step === 1) {
+      setFormStep1({ ...formStep1, [name]: value });
+    } else {
+      setFormStep2({ ...formStep2, [name]: value });
+    }
+    setErrors({ ...errors, [name]: "" });
+  };
+
+  const validateStep1 = () => {
+    const newErrors = {};
+    if (!formStep1.name) newErrors.name = "Name is required";
+    if (!formStep1.email) newErrors.email = "Email is required";
+    if (!formStep1.phone) newErrors.phone = "Phone is required";
+    if (!formStep1.password) newErrors.password = "Password is required";
+    if (formStep1.password !== formStep1.password_confirmation) {
+      newErrors.password_confirmation = "Passwords do not match";
+    }
+    return newErrors;
+  };
+
+  const handleStep1Submit = (e) => {
+    e.preventDefault();
+    const errors = validateStep1();
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      return;
+    }
+    setScreen(1);
+  };
+
+  const handleStep2Submit = (e) => {
+    e.preventDefault();
+    const payload = _makePayload(formStep1, formStep2);
     submit(payload, {
       onError: (errors) => {
         if (!errors.length) {
@@ -43,7 +91,7 @@ const Register = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      history.push("/dashboard");
+      navigate("/dashboard");
     }
   }, [isLoggedIn]);
 
@@ -59,75 +107,60 @@ const Register = () => {
     if (screen === 0) {
       return (
         <div className="p-2" key="step-1">
-          <AvForm
-            className="form-horizontal"
-            onValidSubmit={(e, values) => {
-              toast.success("Lanjut ke langkah kedua");
-              setFormStep1(values);
-              setScreen(1);
-            }}
-          >
-            <div className="mb-3">
-              <AvField
-                name="name"
-                label="Nama Penyelengara"
-                className="form-control"
-                placeholder="Masukkan nama"
-                type="text"
-                required
-                errorMessage="Nama penyelenggara wajib diisi"
-                defaultValue={formStep1?.name}
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="email"
-                label="Email"
-                className="form-control"
-                placeholder="Masukkan email (digunakan untuk masuk)"
-                type="email"
-                required
-                errorMessage="Email wajib diisi"
-                defaultValue={formStep1?.email}
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="phone"
-                label="Nomor Telepon"
-                className="form-control"
-                placeholder="Masukkan nomor telepon (nomor WhatsApp)"
-                type="text"
-                required
-                errorMessage="Nomor telepon wajib diisi"
-                defaultValue={formStep1?.phone}
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="password"
-                label="Kata Sandi"
-                type="password"
-                required
-                placeholder="Masukkan kata sandi"
-                errorMessage="Kata sandi wajib diisi"
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="password_confirmation"
-                label="Konfirmasi Kata Sandi"
-                type="password"
-                required
-                placeholder="Masukkan ulang kata sandi di atas"
-                errorMessage="Kata sandi wajib dikonfirmasi"
-              />
-            </div>
-
+          <form onSubmit={handleStep1Submit}>
+            <FormField
+              name="name"
+              label="Nama Penyelenggara"
+              value={formStep1.name}
+              onChange={handleChange(1)}
+              error={errors.name}
+              placeholder="Masukkan nama"
+              required
+            />
+            <FormField
+              name="email"
+              label="Email"
+              value={formStep1.email}
+              onChange={handleChange(1)}
+              error={errors.email}
+              placeholder="Masukkan email (digunakan untuk masuk)"
+              type="email"
+              required
+            />
+            <FormField
+              name="phone"
+              label="Nomor Telepon"
+              value={formStep1.phone}
+              onChange={handleChange(1)}
+              error={errors.phone}
+              placeholder="Masukkan nomor telepon (nomor WhatsApp)"
+              type="text"
+              required
+            />
+            <FormField
+              name="password"
+              label="Kata Sandi"
+              value={formStep1.password}
+              onChange={handleChange(1)}
+              error={errors.password}
+              type="password"
+              required
+              placeholder="Masukkan kata sandi"
+            />
+            <FormField
+              name="password_confirmation"
+              label="Konfirmasi Kata Sandi"
+              value={formStep1.password_confirmation}
+              onChange={handleChange(1)}
+              error={errors.password_confirmation}
+              type="password"
+              required
+              placeholder="Masukkan ulang kata sandi di atas"
+            />
             <div className="mt-3 d-grid">
               <ButtonBlue type="submit">Selanjutnya</ButtonBlue>
             </div>
-          </AvForm>
+          </form>
         </div>
       );
     }
@@ -141,83 +174,59 @@ const Register = () => {
             </ButtonBack>
           </div>
 
-          <AvForm
-            className="form-horizontal"
-            onValidSubmit={(e, values) => handleValidSubmit(values)}
-          >
-            <div className="mb-3">
-              <AvField
-                name="province"
-                label="Provinsi"
-                className="form-control"
-                placeholder="Pilih provinsi"
-                tag={SelectProvince}
-                onChange={(value) => setProvinceId(value)}
-                required
-                errorMessage="Provinsi wajib diisi"
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="city"
-                label="Kota"
-                className="form-control"
-                placeholder="Pilih kota"
-                provinceId={provinceId}
-                tag={SelectCity}
-                required
-                errorMessage="Kota wajib diisi"
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="questionnaire_source"
-                label="Dari mana Anda mengetahui MyArchery?"
-                placeholder="Pilih opsi"
-                type="text"
-                tag={SelectInfoSource}
-                required
-                errorMessage="Silakan isi sesuai pertanyaan di atas"
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="questionnaire_motive"
-                label="Mengapa Anda ingin menggunakan MyArchery?"
-                className="form-control"
-                placeholder="Sebutkan alasan"
-                type="text"
-                required
-                errorMessage="Silakan isi sesuai pertanyaan di atas"
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="questionnaire_event_name"
-                label="Event terdekat apa yang ingin Anda selenggarakan?"
-                className="form-control"
-                placeholder="Sebutkan nama event"
-                type="text"
-                required
-                errorMessage="Silakan isi sesuai pertanyaan di atas"
-              />
-            </div>
-            <div className="mb-3">
-              <AvField
-                name="questionnaire_event_description"
-                label="Deskripsikan event yang akan Anda selenggarakan?"
-                className="form-control"
-                placeholder="Masukkan deskripsi singkat"
-                type="textarea"
-                required
-                errorMessage="Silakan isi sesuai pertanyaan di atas"
-              />
-            </div>
-
+          <form onSubmit={handleStep2Submit}>
+            <FormField
+              name="province"
+              label="Provinsi"
+              value={formStep2.province}
+              onChange={handleChange(2)}
+              error={errors.province}
+              required
+            />
+            <FormField
+              name="city"
+              label="Kota"
+              value={formStep2.city}
+              onChange={handleChange(2)}
+              error={errors.city}
+              required
+            />
+            <FormField
+              name="questionnaire_source"
+              label="Dari mana Anda mengetahui MyArchery?"
+              value={formStep2.questionnaire_source}
+              onChange={handleChange(2)}
+              error={errors.questionnaire_source}
+              required
+            />
+            <FormField
+              name="questionnaire_motive"
+              label="Mengapa Anda ingin menggunakan MyArchery?"
+              value={formStep2.questionnaire_motive}
+              onChange={handleChange(2)}
+              error={errors.questionnaire_motive}
+              required
+            />
+            <FormField
+              name="questionnaire_event_name"
+              label="Event terdekat apa yang ingin Anda selenggarakan?"
+              value={formStep2.questionnaire_event_name}
+              onChange={handleChange(2)}
+              error={errors.questionnaire_event_name}
+              required
+            />
+            <FormField
+              name="questionnaire_event_description"
+              label="Deskripsikan event yang akan Anda selenggarakan?"
+              value={formStep2.questionnaire_event_description}
+              onChange={handleChange(2)}
+              error={errors.questionnaire_event_description}
+              required
+            />
             <div className="mt-3 d-grid">
               <ButtonBlue type="submit">Buat Akun</ButtonBlue>
             </div>
-          </AvForm>
+          </form>
         </div>
       );
     }
@@ -226,10 +235,7 @@ const Register = () => {
   };
 
   return (
-    <React.Fragment>
-      <MetaTags>
-        <title>Login | MyArchery</title>
-      </MetaTags>
+    <PageWrapper title="Register">
       <div className="home-btn d-none d-sm-block">
         <Link to="/" className="text-dark">
           <i className="fas fa-home h2" />
@@ -286,11 +292,11 @@ const Register = () => {
           </Row>
         </Container>
       </div>
-    </React.Fragment>
+    </PageWrapper>
   );
 };
 
-function _makePayload(formStep1, values) {
+function _makePayload(formStep1, formStep2) {
   return {
     // step 1
     name_organizer: formStep1.name,
@@ -299,13 +305,13 @@ function _makePayload(formStep1, values) {
     password_confirmation: formStep1.password_confirmation,
     phone_number: formStep1.phone,
     // step 2
-    province_id: values.province,
-    city_id: values.city,
+    province_id: formStep2.province,
+    city_id: formStep2.city,
     intro: {
-      where: values.questionnaire_source,
-      why: values.questionnaire_motive,
-      what: values.questionnaire_event_name,
-      description: values.questionnaire_event_description,
+      where: formStep2.questionnaire_source,
+      why: formStep2.questionnaire_motive,
+      what: formStep2.questionnaire_event_name,
+      description: formStep2.questionnaire_event_description,
     },
   };
 }

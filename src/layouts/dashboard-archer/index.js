@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { withRouter } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 // Import komponen lain yang terkait dengan Layout
 // import Navbar from "./Navbar"
@@ -8,6 +8,10 @@ import Footer from "./Footer";
 
 // Functional Component untuk LayoutArcher
 const LayoutArcher = (props) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const params = useParams();
+
   // Menggunakan useEffect untuk mensimulasikan componentDidMount
   useEffect(() => {
     // Mengatur layout body menjadi horizontal
@@ -44,5 +48,5 @@ const LayoutArcher = (props) => {
   );
 };
 
-// Membungkus komponen dengan withRouter untuk mendapatkan akses ke props history
-export default withRouter(LayoutArcher);
+// Export directly without withRouter
+export { LayoutArcher };

@@ -14,8 +14,9 @@ import {
 // import Breadcrumbs from "../../components/Common/Breadcrumb";
 import CardEvent from "./components/CardEvent";
 import { EventsService } from "../../../services"
+import { PageWrapper } from "components/ma/page-wrapper"
 
-const ListEvent = () => {
+const EventsPage = () => {
   // const [isOpenDropDown, setIsOpenDropDown] = useState(false)
   const [listEvent, setListEvent] = useState([])
 
@@ -34,11 +35,8 @@ const ListEvent = () => {
   }, [])
   
   return (
-    <React.Fragment>
+    <PageWrapper title="Dashboard | List - Event">
       <div className="page-content">
-        <MetaTags>
-          <title>Dashboard | List - Event</title>
-        </MetaTags>
         <Container fluid>
           {/* Render Breadcrumb */}
           {/* <Breadcrumbs title="Dashboards" breadcrumbItem="Dashboard" /> */}
@@ -93,8 +91,8 @@ const ListEvent = () => {
           </Row>
         </Container>
       </div>
-    </React.Fragment>
+    </PageWrapper>
   );
 };
 
-export default ListEvent;
+export default EventsPage;

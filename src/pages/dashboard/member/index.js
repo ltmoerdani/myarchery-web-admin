@@ -17,8 +17,9 @@ import IconDownload from "components/ma/icons/mono/download";
 
 import classnames from "classnames";
 import { Container } from "reactstrap";
+import { PageWrapper } from "components/ma/page-wrapper";
 
-function PageDosQualification() {
+const MemberPage = () => {
   const [eventDetail, setEventDetail] = React.useState(null);
 
   const { event_id } = useParams();
@@ -103,7 +104,7 @@ function PageDosQualification() {
   }
 
   return (
-    <React.Fragment>
+    <PageWrapper title="Member Management | MyArchery">
       <div>
         <MetaTags>
           <title>{pageTitle}</title>
@@ -257,9 +258,9 @@ function PageDosQualification() {
           </ViewWrapper>
         </Container>
       </div>
-    </React.Fragment>
+    </PageWrapper>
   );
-}
+};
 
 /* =============================== */
 // styles
@@ -419,4 +420,4 @@ const FilterItemButton = styled.button`
   }
 `;
 
-export default PageDosQualification;
+export default MemberPage;

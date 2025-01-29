@@ -1,5 +1,5 @@
 import React from 'react'
-import { MetaTags } from 'react-meta-tags'
+import { PageWrapper } from 'components/ma/page-wrapper'
 import {
     Container,
     Button,
@@ -11,13 +11,10 @@ import { Link } from 'react-router-dom'
 import { dummyConstants } from '../../../constants'
 import TableCategory from './components/TableCategory'
 
-function ListCategory() {
+const ListCategory = () => {
 
     return (
-        <div className="page-content">
-            <MetaTags>
-                <title>Dashboard | List - Member</title>
-            </MetaTags>
+        <PageWrapper title="Category Management">
             <Container fluid>
             <Link to="/dashboard">
                 <Button color="outline-dark">{'<-'}</Button>
@@ -71,7 +68,7 @@ function ListCategory() {
             </div>
             <TableCategory />
             </Container>
-        </div>
+        </PageWrapper>
     )
 }
 

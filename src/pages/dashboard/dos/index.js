@@ -2,7 +2,7 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { DosService, EventsService } from "services";
-import MetaTags from "react-meta-tags";
+import { PageWrapper } from "components/ma/page-wrapper";
 import { Container, Row, Col } from "reactstrap";
 import { CardEventDos, CardRingkasanDos, CardSchedule } from "./components";
 
@@ -46,35 +46,33 @@ const DashboardDos = () => {
 
     // console.log( eventNameSchedule, 'kiko')
     return (
-    <StyledPageWrapper>
-      <MetaTags>
-        <title>Dashboard DOS | MyArchery.id</title>
-      </MetaTags>
+    <PageWrapper title="Dashboard DOS | MyArchery.id">
+      <StyledPageWrapper>
+        <Container fluid className="mt-4 mb-5">
+          <h1>Dashboard DOS</h1>
 
-      <Container fluid className="mt-4 mb-5">
-        <h1>Dashboard DOS</h1>
+          <Row className="mt-5">
+            <Col md={6}>
+              {data?.dataDos && data?.dataDos.length > 0 ? (
+                <CardEventDos cardData={data?.dataDos}/>
+              ) : <p>Loading ...</p>}
+            </Col>
 
-        <Row className="mt-5">
-          <Col md={6}>
-            {data?.dataDos && data?.dataDos.length > 0 ? (
-              <CardEventDos cardData={data?.dataDos}/>
-            ) : <p>Loading ...</p>}
-          </Col>
+            <Col md={6}>
+              {eventDetail?.publicInformation?.eventName && (
+                <CardRingkasanDos eventName={eventDetail?.publicInformation?.eventName}/>  
+              )}
+              { data?.dataDos && data?.dataDos.length > 0 ? (
+                <>
+                <CardSchedule cardData={data?.dataDos} eventName={eventNameSchedule} />
+                </>
+              ) : <p>Loading ...</p>}
+            </Col>
+          </Row>
 
-          <Col md={6}>
-            {eventDetail?.publicInformation?.eventName && (
-              <CardRingkasanDos eventName={eventDetail?.publicInformation?.eventName}/>  
-            )}
-            { data?.dataDos && data?.dataDos.length > 0 ? (
-              <>
-              <CardSchedule cardData={data?.dataDos} eventName={eventNameSchedule} />
-              </>
-            ) : <p>Loading ...</p>}
-          </Col>
-        </Row>
-
-      </Container>
-    </StyledPageWrapper>
+        </Container>
+      </StyledPageWrapper>
+    </PageWrapper>
   );
 };
 

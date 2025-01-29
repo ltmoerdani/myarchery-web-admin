@@ -1,32 +1,18 @@
-import * as React from "react";
+import React from "react";
 import styled from "styled-components";
-
-import MetaTags from "react-meta-tags";
 import { Container } from "reactstrap";
-import { ProcessingToast, toast } from "./processing-toast";
+import { PageWrapper } from "components/ma/page-wrapper";
 
-function ContentLayoutWrapper({ children, pageTitle, navbar }) {
-  // Buang toast yang kemungkinan masih tertinggal
-  // ketika page di-unmount/pindah page
-  React.useEffect(() => {
-    return () => toast.dismiss();
-  }, []);
-
+const ContentLayoutWrapper = ({ children, pageTitle, navbar }) => {
   return (
-    <React.Fragment>
-      <MetaTags>
-        {pageTitle ? <title>{pageTitle} | MyArchery.id</title> : <title>MyArchery.id</title>}
-      </MetaTags>
-
+    <PageWrapper title={pageTitle}>
       {navbar}
-
       <Container fluid>
-        <ProcessingToast />
         <StyledPageWrapper>{children}</StyledPageWrapper>
       </Container>
-    </React.Fragment>
+    </PageWrapper>
   );
-}
+};
 
 const StyledPageWrapper = styled.div`
   margin: 3.5rem 0;

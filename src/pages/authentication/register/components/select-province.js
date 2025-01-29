@@ -2,7 +2,7 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import { GeneralService } from "services";
 
-import { AsyncPaginate } from "react-select-async-paginate";
+import Select from "react-select";
 import { customSelectStyles } from "./select-options";
 
 const FETCHING_LIMIT = 30;
@@ -29,16 +29,14 @@ function SelectProvince({ name, placeholder, value, onChange, errors, disabled }
   };
 
   return (
-    <AsyncPaginate
+    <Select
       styles={computeCustomStylesWithValidation(errors)}
       name={name}
-      loadOptions={loadOptions}
+      options={localOptions}
       placeholder={placeholder}
       value={_getOptionByValue(localOptions, value)}
       onChange={(opt) => onChange?.(opt.value)}
       isSearchable
-      debounceTimeout={200}
-      additional={{ page: 1 }}
       isDisabled={disabled}
     />
   );

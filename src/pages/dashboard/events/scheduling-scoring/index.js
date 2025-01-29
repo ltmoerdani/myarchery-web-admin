@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useParams, useLocation, useHistory } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
 import { useWizardView } from "utils/hooks/wizard-view";
 
-import MetaTags from "react-meta-tags";
+import { PageWrapper } from "components/ma/page-wrapper";
 import { Container } from "reactstrap";
 import { WizardView, WizardViewContent } from "components/ma";
 import { StepsList, StepItem } from "./components";
@@ -25,7 +25,7 @@ const stepsList = [
 
 const PageEventDetailSchedulingScoring = () => {
   const { event_id } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const eventId = parseInt(event_id);
@@ -35,11 +35,7 @@ const PageEventDetailSchedulingScoring = () => {
   const { currentStep, goToStep } = useWizardView(stepsList, paramMenu);
 
   return (
-    <React.Fragment>
-      <MetaTags>
-        <title>Atur Jadwal dan Skor Pertandingan | MyArchery.id</title>
-      </MetaTags>
-
+    <PageWrapper title="Atur Jadwal dan Skor Pertandingan">
       <StyledPageWrapper>
         <Container fluid>
           <BreadcrumbDashboard to={`/dashboard/event/${eventId}/home`}>Kembali</BreadcrumbDashboard>
@@ -51,7 +47,7 @@ const PageEventDetailSchedulingScoring = () => {
                 currentStep={currentStep}
                 onChange={(step) => {
                   goToStep(step);
-                  history.replace(`${location.pathname}?menu=${step}`);
+                  navigate(`${location.pathname}?menu=${step}`, { replace: true });
                 }}
               >
                 <StepItem step="1" icon={<IconTarget size="20" />}>
@@ -86,7 +82,7 @@ const PageEventDetailSchedulingScoring = () => {
           </StickyContainer>
         </Container>
       </StyledPageWrapper>
-    </React.Fragment>
+    </PageWrapper>
   );
 };
 

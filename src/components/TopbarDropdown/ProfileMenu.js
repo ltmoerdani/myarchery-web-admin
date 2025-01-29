@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import * as AuthenticationStore from "store/slice/authentication";
 import { AdminService } from "services";
@@ -17,7 +17,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import user1 from "../../assets/images/users/avatar-man.png";
 
 const ProfileMenu = React.memo((props) => {
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [username, setUsername] = useState("Admin");
   const [menu, setMenu] = useState(false);
@@ -32,8 +32,8 @@ const ProfileMenu = React.memo((props) => {
   const handleCancelLogout = useCallback(() => setConfirmLogout(false), []);
   const handleLogout = useCallback(() => {
     dispatch(AuthenticationStore.logout());
-    push("/login");
-  }, [dispatch, push]);
+    navigate("/login");
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     AdminService.getProfile().then((res) => {

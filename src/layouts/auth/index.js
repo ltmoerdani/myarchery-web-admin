@@ -1,10 +1,18 @@
 import PropTypes from 'prop-types';
 import React from "react";
-import { withRouter } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "toastr/build/toastr.min.css";
 
 const NonAuthLayout = (props) => {
-  return <React.Fragment>{props.children}</React.Fragment>;
+  const location = useLocation();
+  
+  return (
+    <div>
+      <div className="account-pages">
+        {props.children}
+      </div>
+    </div>
+  );
 };
 
 NonAuthLayout.propTypes = {
@@ -12,4 +20,4 @@ NonAuthLayout.propTypes = {
   location: PropTypes.object,
 };
 
-export default withRouter(NonAuthLayout);
+export { NonAuthLayout };
